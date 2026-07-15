@@ -1,3 +1,17 @@
+import json
+from pathlib import Path
+import os
+from dotenv import load_dotenv, dotenv_values
+from functools import cache
+
+from global_values import *
+from set_data import * 
+from helpers_geom import *
+from loader import * 
+from global_values import VERBOSE
+
+load_dotenv()
+
 def process_marker_set(marker_set, offset=None):
     global markers, processed_marker_set
 
@@ -17,12 +31,10 @@ def process_marker_set(marker_set, offset=None):
 
     for marker in marker_set["tMarkerSet"]:
 
-        if process_marker(marker): continue
+        if process_marker(marker, offset): continue
 
-def process_marker_actor(marker): 
-    # Early Exit if not an actor 
-    if sno_reference["groupName"] != "Actor": return None
-
+def process_marker_actor(marker, offset): 
+    sno_reference = marker.get('snoname')
     e_actor_type = None
     e_gizmo_type = None
 
@@ -33,18 +45,20 @@ def process_marker_actor(marker):
             e_gizmo_type = base_data.get("eGizmoType")
             break
 
-    actor = load_data(sno_reference)
+    actor = load_data(sno_reference.get('groupName'), sno_reference.get('name'))
 
     if e_actor_type is None:
             e_actor_type = actor.get("eType")
             e_gizmo_type = actor.get("eActorGizmoType")
 
-    if e_actor_type not in ActorTypeEnum.values(): return None
-    if (e_actor_type == ActorTypeEnum["Gizmo"] and e_gizmo_type not in GizmoTypeEnum.values()): return None
+    if e_actor_type not in ACTOR_TYPE_ENUM.values(): return None
+    if (e_actor_type == ACTOR_TYPE_ENUM["Gizmo"] and e_gizmo_type not in GIZMO_TYPE_ENUM.values()): return None
 
-    strings = load_strings(sno_reference)
+    strings = load_data(sno_reference.get('groupName'), sno_reference.get('name'))
     adjusted = translate(marker["transform"]["wp"], offset)
-    tooltip = make_tool_tip(strings, sno_reference, e_actor_type, e_gizmo_type)
+    tooltip = make_tool_tip(
+        strings, sno_reference, e_actor_type, e_gizmo_type, adjusted
+        )
 
     key = "|".join([
         "actor",
@@ -56,8 +70,8 @@ def process_marker_actor(marker):
 
     search_text = " ".join(filter(None, [
         "actor",
-        ActorTypeEnumLabels.get(e_actor_type),
-        GizmoTypeEnumLabels.get(e_gizmo_type),
+        ACTOR_TYPE_ENUM_LABELS.get(e_actor_type),
+        GIZMO_TYPE_ENUM_LABELS.get(e_gizmo_type),
         strings.get("Name"),
         sno_reference.get("name")
     ]))
@@ -76,7 +90,8 @@ def process_marker_actor(marker):
     markers[key] = make_marker_generic(search_text, css, e_actor_type, e_gizmo_type, adjusted, tooltip)
     return True
 
-def process_marker_spawn(marker): 
+def process_marker_spawn(marker, offset): 
+    sno_reference = marker["snoname"]
     spawn_type = None
 
     for base in marker["ptBase"]:
@@ -111,32 +126,33 @@ def process_marker_spawn(marker):
 
         markers[key] = make_marker_generic(f'{spawn_type or ""}', class_css, None, None, adjusted, tooltip)
 
-def process_marker(marker): 
+def process_marker(marker, offset): 
     if marker.get("__type__") != "Marker": return None
     sno_reference = marker["snoname"]
+    if sno_reference is None: return None
 
     # Normal actor markers
     if sno_reference.get("name"):
         # Nested MarkerSet
         if sno_reference["groupName"] == "MarkerSet":
-        new_marker_set = load_data(sno_reference)
-        process_marker_set( new_marker_set, translate(marker["transform"]["wp"], offset) )
-        return None
+            new_marker_set = load_data(sno_reference.get('groupName'), sno_reference.get('name'))
+            process_marker_set( new_marker_set, translate(marker["transform"]["wp"], offset) )
+            return None
 
         # Encounter -> Symbol
         if sno_reference["groupName"] == "Encounter":
-            encounter = load_data(sno_reference)
+            encounter = load_data(sno_reference.get('groupName'), sno_reference.get('name'))
             if encounter.get("snoSymbol", {}).get("name"): sno_reference = encounter["snoSymbol"]
 
         # Early Exit if not an actor 
         if sno_reference["groupName"] != "Actor": return None
-        if process_marker_actor(marker): return True
+        if process_marker_actor(marker, offset): return True
 
     elif any(
         base.get("__type__") == "MarkerSpawnLocData"
         for base in marker.get("ptBase", [])
     ): 
-        process_marker_spawn(marker)
+     if process_marker_spawn(marker, offset): return True
 
 
         
@@ -151,8 +167,8 @@ def make_marker_generic(
     class_css,
     e_actor_type = None, 
     e_gizmo_type = None, 
-    adjusted, 
-    tooltip
+    adjusted = None, 
+    tooltip = None
 ):
     return (
         f'<path '
@@ -167,7 +183,7 @@ def make_marker_generic(
         f'</path>'
     )
 
-def make_tool_tip(strings, sno_reference, e_actor_type, e_gizmo_type): 
+def make_tool_tip(strings, sno_reference, e_actor_type, e_gizmo_type, adjusted): 
     lines = []
 
     if strings.get("Name"): lines.append(f"Name: {strings['Name']}")
