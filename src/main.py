@@ -9,7 +9,7 @@ from render import *
 
 
  # Globals 
-IMAGE_URL = 
+IMAGE_URL = 'https://github.com/D4DataTools/d4Atlas/blob/main/docs/Sanctuary_Eastern_Continent_map.jpg'
 
 markers = {}
 
