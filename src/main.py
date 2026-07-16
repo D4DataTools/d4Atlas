@@ -55,6 +55,6 @@ print(type(markers))
 markers_values = sorted(markers.values(), reverse=True)
 print (markers_values)
 print(type(markers_values))
-write_atlas_html(markers_values, borders, zone_art)
+write_atlas_html(borders, markers_values, zone_art)
 
 

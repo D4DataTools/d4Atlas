@@ -154,13 +154,6 @@ def process_marker(marker, offset):
      if process_marker_spawn(marker, offset): return True
 
 
-        
-
-        
-
-         
-
-
 def make_marker_generic(
     search_text,
     class_css,
