@@ -18,6 +18,20 @@ class World:
         # Prevent recursive marker set loops
         self.processed_marker_sets = set()
 
+    @property
+    def zone_art(self): 
+        params = self.data.get('tZoneMapParams')
+        center = params.get('vecZoneArtCenter')
+        scale = params.get('flZoneArtScale')
+        grid_size = self.data.get('flGridSize')
+
+        return {
+            "x": -1 * center.get('x') / scale,
+            "y": -1 * center.get('y') / scale,
+            "w": params.get('nGridSystemZoneMapFieldWidth') * grid_size, 
+            "h": params.get('nGridSystemZoneMapFieldHeight') * grid_size
+        }    
+
     #' @name = world_class
     #' @param cls Class
     #' @param name A `str` with the name of the world from D4Data
