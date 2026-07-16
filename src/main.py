@@ -14,23 +14,57 @@ from helpers_geom import *
 # from world import * 
 # from render import * 
 
-
-
 sanctuary_eastern_continent = load_data('World','Sanctuary_Eastern_Continent')
 global_markers = load_data('Global','global_markers')
 
-#if VERBOSE: print(f'`global_markers` keys: {global_markers.keys()}')
-content_entries = global_markers.get('ptContent')
-#if VERBOSE: print(f'global_markers["ptContent"] is of length {len(content_entries)}')
 
+
+
+region_boundries = sanctuary_eastern_continent.get('arRegionBoundaries')
+if VERBOSE: print(f'there are {len(region_boundries)} region boundries')
+
+def format_ar_point(point):
+    x = point.get('x')
+    y = point.get('y')
+    if x is None or y is None: return None
+    return(f'{x} {y}')
+
+def format_ar_points(ar_points):
+    return ' L '.join( p for point in points if (p := format_ar_point(point)))
+
+
+def get_boundries_for_static_camp(camp): 
+    if camp.get('__type__') != 'ScreenStaticCamps': return None 
+    sno_territory = camp.get('snoTerritory')
+    if not sno_territory: return None 
+
+    strings = load_strings(sno_territory)
+    points = format_ar_points(camp.get('arPoints', []))
+
+    return (
+        f'<path class="subzone-border" '
+        f'd="M {points} z">'
+        f'<title>{strings.get("Name", "")}</title></path>'
+    )
+
+borders = [
+    border for camp in region_boundries
+    if (border := get_boundries_for_static_camp(camp))
+]
+
+
+if VERBOSE: print(f'`global_markers` keys: {global_markers.keys()}')
+content_entries = global_markers.get('ptContent')
+if VERBOSE: print(f'global_markers["ptContent"] is of length {len(content_entries)}')
+# to many nested loops >:(
 for content_entry in content_entries: 
-    #if VERBOSE: print(f'content_entry has keys: {content_entry.keys()}')
+    if VERBOSE: print(f'content_entry has keys: {content_entry.keys()}')
     global_marker_actors = content_entry.get('arGlobalMarkerActors')
-    #if VERBOSE: print(f'global_marker_actors is of type {type(global_marker_actors)}')
+    if VERBOSE: print(f'global_marker_actors is of type {type(global_marker_actors)}')
     if not isinstance(global_marker_actors, list): continue
 
     for global_marker_actor in global_marker_actors:
-        #if VERBOSE: print(f'global_maker_actor has keys: {global_marker_actor.keys()}')
+        if VERBOSE: print(f'global_maker_actor has keys: {global_marker_actor.keys()}')
         sno_world = global_marker_actor.get('snoWorld')
         sno_world_name = sno_world.get('name')
         sno_marker_set = global_marker_actor.get('snoMarkerSet')
@@ -39,11 +73,6 @@ for content_entry in content_entries:
 
         marker_set = load_data(sno_marker_set.get('groupName'), sno_marker_set_name)
         process_marker_set(marker_set)
-
-
-
-
-
 
 
 
@@ -58,34 +87,32 @@ for x in server_data:
 
     scene_chunks = x.get('ptSceneChunks')
     for chunk in scene_chunks:
-        # if VERBOSE: print(f'chunk keys: {chunk.keys()}')
+        if VERBOSE: print(f'chunk keys: {chunk.keys()}')
         scene_spec = chunk.get('tSceneSpec')
-        # if VERBOSE: print(f'tSceneSpec keys {scene_spec.keys()}')
+        if VERBOSE: print(f'tSceneSpec keys {scene_spec.keys()}')
 
         subzones = scene_spec.get('arSubzones')
-        # if VERBOSE: print(f'Subzones is of length {len(subzones)}')
+        if VERBOSE: print(f'Subzones is of length {len(subzones)}')
         
         for subzone_entry in subzones:
-            # if VERBOSE: print(f'subzone_entry keys: {subzone_entry.keys()}')
+            if VERBOSE: print(f'subzone_entry keys: {subzone_entry.keys()}')
             subzone_ref = subzone_entry.get('snoSubzone')
-            # if VERBOSE: print(subzone_ref)
-            # if VERBOSE: print(f'subzone_ref keys: {subzone_ref.keys()}')
+            if VERBOSE: print(subzone_ref)
+            if VERBOSE: print(f'subzone_ref keys: {subzone_ref.keys()}')
             subzone = load_data(subzone_ref.get('groupName'), subzone_ref.get('name'))
 
-            # if VERBOSE: print(f'subzone keys: {subzone.keys()}')
+            if VERBOSE: print(f'subzone keys: {subzone.keys()}')
 
             world_marker_sets = subzone.get('arWorldMarkerSets')
         
             for entry in world_marker_sets:
-                # if VERBOSE: print(f'entry keys: {entry.keys()}')
+                if VERBOSE: print(f'entry keys: {entry.keys()}')
                 sno_marker_set = entry.get('snoMarkerSet')
-                # if VERBOSE: print(f'sno_marker_set keys {sno_marker_set.keys()}')
+                if VERBOSE: print(f'sno_marker_set keys {sno_marker_set.keys()}')
                 if sno_marker_set and sno_marker_set.get('groupName') == 'MarkerSet':
                     marker_set = load_data(sno_marker_set.get('groupName'), sno_marker_set.get('name'))
                     process_marker_set(marker_set)
 
         
-
-# process_marker_set()
-# write_atlas_html(markers)
+write_atlas_html(markers)
 
