@@ -24,10 +24,8 @@ def format_ar_points(ar_points):
 
 
 def get_boundries_for_static_camp(camp): 
-    print(camp.keys())
     if camp.get('__type__') != 'TerritoryRegionBoundary': return None 
     sno_territory = camp.get('snoTerritory')
-    print(sno_territory)
     if not sno_territory: return None 
 
     strings = load_strings(sno_territory)

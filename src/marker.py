@@ -8,12 +8,11 @@ from global_values import *
 from set_data import * 
 from helpers_geom import *
 from loader import * 
-from global_values import VERBOSE
+from global_values import *
 
 load_dotenv()
 
 def process_marker_set(marker_set, offset=None):
-    global markers, processed_marker_set
 
     if offset is None: offset = {"x": 0, "y": 0, "z": 0}
 
