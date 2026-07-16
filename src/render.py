@@ -1,7 +1,22 @@
 from pathlib import Path
+from global_values import *
 
-def write_atlas_html(borders, markers, path):
-    image_url = "https://files.blizzhackers.dev/d4tex/Sanctuary_Eastern_Continent_map.jpg"
+def calc_zone_art(world):
+    zone_map_params = world.get('tZoneMapParams')
+    zone_art_center = zone_map_params.get('vecZoneArtCenter')
+    zone_art_scale = zone_map_params.get('flZoneArtScale')
+    grid_size = world.get('flGridSize')
+    
+    return {
+        "x": -1 * zone_art_center.get('x') / zone_art_scale,
+        "y": -1 * zone_art_center.get('y') / zone_art_scale,
+        "w": zone_map_params.get('nGridSystemZoneMapFieldWidth') * grid_size, 
+        "h": zone_map_params.get('nGridSystemZoneMapFieldHeight') * grid_size
+    }
+
+def write_atlas_html(borders, markers, zone_art):
+
+    markers = sorted(markers.values(), reverse=True)
 
     html = f"""<!DOCTYPE html>
     <html>
@@ -37,11 +52,13 @@ def write_atlas_html(borders, markers, path):
             transform="matrix(3.6466190067585558 0 0 3.6466190067585558 -3030 3625)">
 
             <image
-                href="{image_url}"
-                x="-1356"
-                y="-2724"
-                width="3836"
-                height="3836">
+                href="{IMAGE_URL}"
+                 preserveAspectRatio="none" 
+                 x="{zone_art.get("x")}" 
+                 y="{zone_art.get("y")}" 
+                 width="{zone_art.get("w")}" 
+                 height="{zone_art.get("h")}">
+
 
                 <title>Sanctuary Eastern Continent</title>
 
@@ -65,12 +82,15 @@ def write_atlas_html(borders, markers, path):
     </html>
     """
 
-    Path("docs").mkdir(exist_ok=True)
+    try: 
+        script_parent_dir = Path(__file__).parent
+    except (NameError, TypeError):
+        script_parent_dir = Path(os.getcwd())
 
-    Path("docs/atlas.html").write_text(html, encoding="utf-8")
+    output_dir = script_parent_dir.parent / 'docs' / 'atlas.html'
 
-
-
-
+    output_dir.write_text(html, encoding="utf-8")
 
     return
+
+
