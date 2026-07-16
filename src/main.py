@@ -23,38 +23,23 @@ sanctuary_eastern_continent = load_data('World','Sanctuary_Eastern_Continent')
 global_markers = load_data('Global','global_markers')
 
 
-
-
-print(type(markers))
-
 region_boundries = sanctuary_eastern_continent.get('arRegionBoundaries')
 print(f'there are {len(region_boundries)} region boundries')
-
-print(type(markers))
 
 
 borders = [
     border for camp in region_boundries
     if (border := get_boundries_for_static_camp(camp))
 ]
-print(type(markers))
-
 
 print(f'`borders is length: {len(borders)}')
 
 process_world(sanctuary_eastern_continent)
-print(type(markers))
-
 process_global_markers(global_markers)
-print(type(markers))
-
 
 zone_art = calc_zone_art(sanctuary_eastern_continent)
-print(type(markers))
 
 markers_values = sorted(markers.values(), reverse=True)
-print (markers_values)
-print(type(markers_values))
 write_atlas_html(borders, markers_values, zone_art)
 
 
