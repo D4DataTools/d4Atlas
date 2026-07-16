@@ -35,6 +35,7 @@ def render_atlas_html (world: World, output: Path = None, image_url: str = CONFI
             output = script_parent_dir.parent / 'docs' 
 
     output = output / 'atlas.html'
+    output.parent.mkdir(parents=True, exist_ok=True) 
     output.write_text(html, encoding="utf-8")
 
 #' Render the atlas.css file for the d4Atlas Website
@@ -59,6 +60,7 @@ def render_atlas_css(output: Path = None):
             output = script_parent_dir.parent / 'docs'
 
     output = output /  'atlas.css'
+    output.parent.mkdir(parents=True, exist_ok=True) 
     output.write_text(css_template, encoding="utf-8")
 
 #' Render the atlas.js file for the d4Atlas Website
@@ -82,7 +84,7 @@ def render_atlas_js(output: Path = None):
             output = script_parent_dir.parent / 'docs' 
 
     output = output / 'atlas.js'
-
+    output.parent.mkdir(parents=True, exist_ok=True) 
     output.write_text(js_template, encoding="utf-8")
 
 #' Render the d4Atlas Website
