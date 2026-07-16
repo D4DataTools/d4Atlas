@@ -1,7 +1,7 @@
-from .processing.markers import _process_maker_set
-from .enums import *
-from .data.loader import load_data, load_strings, load_json
-from .config import CONFIG
+from d4atlas.processing.markers import _process_maker_set
+from d4atlas.processing.boundries import get_boundries_for_static_camp
+from d4atlas.data.loader import load_data, load_strings, load_json
+from d4atlas.config import CONFIG
 
 #' @title Word as a Class
 #' @name: world_class
@@ -48,7 +48,6 @@ class World:
     #' @param self requires an object of type `World` with a non empty `self.data` and `self.name`
     #' @retrun None
     #' @details Updates `self.region_boundaries` using `self.data`
-    @classmethod
     def process_region_boundaries(self):
         if CONFIG.verbose: print(f'  - Processing Region Boundries.')
         # null list skips the loop but silenetly fails. 
@@ -61,7 +60,6 @@ class World:
     #' @param self requires an object of type `World` with a non empty `self.data` and `self.name`
     #' @retrun None
     #' @details Updates `self.markers` using `self.data` with global markers.
-    @classmethod   
     def process_global_markers(self):
         if CONFIG.verbose: print(f'  - Processing global_markers for {self.name}')
         get_global_marker_sets(self)
@@ -71,7 +69,7 @@ class World:
     #' @retrun None
     #' @details Updates `self.markers` using `self.data` with server markers.
     def process_world_server_data(self):
-        print(f'processing world server data for {self.name}')
+        if CONFIG.verbose: print(f'  - Processing world server data for {self.name}')
         for world_server_entry in self.data.get('ptServerData', []):
             self.process_world_server_entry(world_server_entry)
 

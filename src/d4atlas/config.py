@@ -1,3 +1,4 @@
+import os
 import json
 from dataclasses import dataclass
 from pathlib import Path
@@ -17,6 +18,8 @@ class D4AtlasConfig:
         else None
     )
     image_url: str = 'https://github.com/D4DataTools/d4Atlas/blob/main/docs/Sanctuary_Eastern_Continent_map.jpg?raw=true'
+
+CONFIG = D4AtlasConfig()
 
 SNO_GROUP_MAP = {
     "SubZone": "Subzone"

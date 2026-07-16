@@ -1,8 +1,9 @@
+import os
 import json
 from pathlib import Path 
 from functools import cache
 
-from .config import CONFIG, SNO_GROUP_MAP
+from d4atlas.config import CONFIG, SNO_GROUP_MAP
 
 # Lazily populated index
 _indexes = {}
@@ -103,7 +104,7 @@ def load_data(group: str, name: str):
 #' @param sno_entry Either a str or a dict containing a reference to a sno object.abs
 #' @param language Optional arguement defaults to "enUS"
 def load_strings(sno_entry, language: str="enUS"):
-    if VERBOSE: print(f'Loading Strings for {sno_entry} ({language})')
+    if CONFIG.verbose: print(f'Loading Strings for {sno_entry} ({language})')
 
     data_root = Path(os.getenv("DATA_ROOT")) 
 

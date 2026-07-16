@@ -1,4 +1,4 @@
-from world import *
+from .world import *
 
 __all__ = [
     "World"
