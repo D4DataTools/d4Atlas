@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv, dotenv_values
 from functools import cache
 
+
 from global_values import *
 from set_data import * 
 from loader import *
@@ -87,3 +88,12 @@ def process_global_marker_actor(global_marker_actor):
     if(sno_world_name != 'Sanctuary_Eastern_Continent' or not sno_marker_set_name ): return
 
     process_marker_set(load_data(sno_marker_set.get('groupName'), sno_marker_set_name))
+
+def process_borders(world): 
+    region_boundaries = world.get('arRegionBoundaries')
+
+    return [
+        border for camp in region_boundaries
+        if (border := get_boundries_for_static_camp(camp)) 
+    ]
+

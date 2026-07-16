@@ -20,10 +20,7 @@ global_markers = load_data('Global','global_markers')
 
 region_boundries = sanctuary_eastern_continent.get('arRegionBoundaries')
 
-borders = [
-    border for camp in region_boundries
-    if (border := get_boundries_for_static_camp(camp))
-]
+borders = process_borders(sanctuary_eastern_continent)
 
 process_world(sanctuary_eastern_continent)
 process_global_markers(global_markers)
