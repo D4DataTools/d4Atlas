@@ -57,7 +57,7 @@ def render_atlas_css(output: Path = None):
             script_parent_dir = Path(os.getcwd())
             output = script_parent_dir.parent / 'docs' / 'atlas.css'
 
-    output.write_text(html, encoding="utf-8")
+    output.write_text(css_template, encoding="utf-8")
 
 #' Render the atlas.js file for the d4Atlas Website
 #'
@@ -79,7 +79,7 @@ def render_atlas_js(output: Path = None):
             script_parent_dir = Path(os.getcwd())
             output = script_parent_dir.parent / 'docs' / 'atlas.js'
 
-    output.write_text(html, encoding="utf-8")
+    output.write_text(js_template, encoding="utf-8")
 
     return
 
