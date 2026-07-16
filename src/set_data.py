@@ -20,7 +20,7 @@ ACTOR_TYPE_ENUM = {
   "Foliage": 12,
   "Minimap Secret": 13,
   "Mount": 14,
-  "ACTORTYPE_COUNT": 15,    
+  "ACTORTYPE_COUNT": 15,  
 }
 
 ACTOR_TYPE_ENUM_LABELS = {v: k for k, v in ACTOR_TYPE_ENUM.items()}
@@ -67,7 +67,12 @@ GIZMO_TYPE_ENUM = {
   "Quest Chest": 105,
   "Unique Operator Chest": 106,
   "Chair": 107,
-  "Party Member Portal": 108
+  "Party Member Portal": 108,
+  "Participant Timer": 109,
+  "Recipe Event": 110,
+  "Event Select Portal": 112,
+  "Raid Banner": 113,
+  "Armory": 114
 }
 
 GIZMO_TYPE_ENUM_LABELS = {v: k for k, v in GIZMO_TYPE_ENUM.items()}
