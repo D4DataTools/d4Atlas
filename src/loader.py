@@ -3,8 +3,20 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv, dotenv_values
 from functools import cache
-from global_values import VERBOSE
+from global_values import *
 
+
+
+
+def build_group_index(group_folder: Path):
+    index = {}
+
+    for file in group_folder.glob("*.json"):
+        # Skeleton.act.json -> Skeleton
+        name = file.name.split(".", 1)[0]
+        index[name] = file
+
+    return index
 
 @cache
 def load_json(filename):
@@ -49,21 +61,39 @@ def load_strings(sno_entry, language="enUS"):
 
     return strings
 
+# @cache
+# def load_data(group, name):
+
+#     # really hacky solution to a bug I am having 
+#     if group == 'SubZone': group = 'Subzone'
+
+#     data_root = Path(os.getenv("DATA_ROOT")) 
+#     folder = data_root / 'json' / 'base' / 'meta' / group
+    
+#     if VERBOSE: print( f'Loading folder: `{folder}`')
+
+#     files = folder.glob(f'{name}.*.json')
+
+#     for file in files:
+#         return load_json(Path(file))
+
+#     return {}
+
 @cache
 def load_data(group, name):
+    folder = SNO_GROUP_MAP.get(group, group)
 
-    # really hacky solution to a bug I am having 
-    if group == 'SubZone': group = 'Subzone'
+    path = indexes.get(folder, {}).get(name)
+    if path is None:
+        return {}
 
-    data_root = Path(os.getenv("DATA_ROOT")) 
-    folder = data_root / 'json' / 'base' / 'meta' / group
-    
-    if VERBOSE: print( f'Loading folder: `{folder}`')
+    return load_json(path)
 
-    files = folder.glob(f'{name}.*.json')
 
-    for file in files:
-        return load_json(Path(file))
+indexes = {}
 
-    return {}
+meta_root = Path(os.getenv('DATA_ROOT')) / "json" / "base" / "meta"
 
+for folder in meta_root.iterdir():
+    if folder.is_dir():
+        indexes[folder.name] = build_group_index(folder)

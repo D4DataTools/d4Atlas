@@ -16,7 +16,7 @@ def calc_zone_art(world):
 
 def write_atlas_html(borders, markers, zone_art):
 
-    markers = sorted(markers.values(), reverse=True)
+    #markers = sorted(markers.values(), reverse=True)
 
     html = f"""<!DOCTYPE html>
     <html>

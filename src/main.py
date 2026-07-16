@@ -14,8 +14,15 @@ from helpers_geom import *
 from world import *
 from render import * 
 
+
+
+
+
+
 sanctuary_eastern_continent = load_data('World','Sanctuary_Eastern_Continent')
 global_markers = load_data('Global','global_markers')
+
+
 
 
 print(type(markers))
@@ -45,6 +52,9 @@ print(type(markers))
 zone_art = calc_zone_art(sanctuary_eastern_continent)
 print(type(markers))
 
-write_atlas_html(markers, borders, zone_art)
+markers_values = sorted(markers.values(), reverse=True)
+print (markers_values)
+print(type(markers_values))
+write_atlas_html(markers_values, borders, zone_art)
 
 

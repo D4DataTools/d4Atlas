@@ -12,7 +12,7 @@ markers = {}
 
 processed_marker_set = {}
 
-sno_group_map = {
+SNO_GROUP_MAP = {
     "SubZone": "Subzone"
 }
 
