@@ -32,8 +32,9 @@ def render_atlas_html (world: World, output: Path = None, image_url: str = CONFI
             script_parent_dir = Path(__file__).parent
         except (NameError, TypeError):
             script_parent_dir = Path(os.getcwd())
-            output = script_parent_dir.parent / 'docs' / 'atlas.html'
+            output = script_parent_dir.parent / 'docs' 
 
+    output = output / 'atlas.html'
     output.write_text(html, encoding="utf-8")
 
 #' Render the atlas.css file for the d4Atlas Website
@@ -55,8 +56,9 @@ def render_atlas_css(output: Path = None):
             script_parent_dir = Path(__file__).parent
         except (NameError, TypeError):
             script_parent_dir = Path(os.getcwd())
-            output = script_parent_dir.parent / 'docs' / 'atlas.css'
+            output = script_parent_dir.parent / 'docs'
 
+    output = output /  'atlas.css'
     output.write_text(css_template, encoding="utf-8")
 
 #' Render the atlas.js file for the d4Atlas Website
@@ -77,11 +79,11 @@ def render_atlas_js(output: Path = None):
             script_parent_dir = Path(__file__).parent
         except (NameError, TypeError):
             script_parent_dir = Path(os.getcwd())
-            output = script_parent_dir.parent / 'docs' / 'atlas.js'
+            output = script_parent_dir.parent / 'docs' 
+
+    output = output / 'atlas.js'
 
     output.write_text(js_template, encoding="utf-8")
-
-    return
 
 #' Render the d4Atlas Website
 #'
