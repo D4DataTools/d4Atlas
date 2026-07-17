@@ -1,6 +1,6 @@
 from d4atlas.geometry import translate
 from d4atlas.enums import *
-from d4atlas.data.loader import load_data
+from d4atlas.data.loader import load_data, load_strings
 
 
 # process_maker_set written for a class: world compatability
@@ -26,12 +26,12 @@ def _process_marker(world, marker, offset ):
     if sno_reference is None: return None
 
 
-    # if a marker has a 'name' it is either a nested marker, a sybol, or an actor
+    # if a marker has a 'name' it is either a nested marker, a symbol, or an actor
     if sno_reference.get("name"):
         # Nested MarkerSet
         if sno_reference["groupName"] == "MarkerSet":
             new_marker_set = load_data(sno_reference.get('groupName'), sno_reference.get('name'))
-            _process_marker(world, new_marker_set, translate(marker["transform"]["wp"], offset) )
+            _process_maker_set(world, new_marker_set, translate(marker["transform"]["wp"], offset) )
             return None
 
         # Encounter -> Symbol
@@ -72,7 +72,7 @@ def _process_marker_actor(world, marker, offset):
     if e_actor_type not in ACTOR_TYPE_ENUM.values(): return None
     if (e_actor_type == ACTOR_TYPE_ENUM["Gizmo"] and e_gizmo_type not in GIZMO_TYPE_ENUM.values()): return None
 
-    strings = load_data(sno_reference.get('groupName'), sno_reference.get('name'))
+    strings = load_strings(sno_reference.get('groupName'), sno_reference.get('name'))
     adjusted = translate(marker["transform"]["wp"], offset)
 
     tooltip = make_tool_tip(strings, sno_reference, e_actor_type, e_gizmo_type, adjusted)
@@ -147,7 +147,7 @@ def _process_marker_spawn(world, marker, offset):
 
         class_css = (
             f'searchable spawn '
-            f'pawn-type-{spawn_type}'
+            f'spawn-type-{spawn_type}'
         )
 
         world.markers[key] = make_marker_generic(
@@ -159,9 +159,7 @@ def _process_marker_spawn(world, marker, offset):
             tooltip
         )
 
-
-
-
+#' Helper function to format a marker for html
 def make_marker_generic(
     search_text,
     class_css,
@@ -183,6 +181,7 @@ def make_marker_generic(
         f'</path>'
     )
 
+#' Helper Function to make formatting the tool tip for the svg easier
 def make_tool_tip(strings, sno_reference, e_actor_type, e_gizmo_type, adjusted): 
     lines = []
 

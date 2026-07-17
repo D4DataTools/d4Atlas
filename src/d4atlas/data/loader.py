@@ -7,11 +7,12 @@ from d4atlas.config import CONFIG, SNO_GROUP_MAP
 
 # Lazily populated index
 _indexes = {}
+_files_read = 0
 
 #' Set / Override data_root Used in Loaders
 #' @param Path Set the Path 
 #' @return None
-#' @details Changing the root invalidates folder indexes and cachces.
+#' @details Changing the root invalidates folder indexes and caches.
 #' @export
 def set_data_root(path: str | Path):
 
@@ -52,7 +53,7 @@ def _build_group_index(group_folder: Path):
 
 #' Get The Index For A Given Group
 #' 
-#' @param group a `str` with the Name of the gruop.
+#' @param group a `str` with the Name of the group.
 #' @return The index of the specified folder. A`dict` with key of str and Value of `Path`      
 
 def _get_group_index(group: str) -> dict[str, Path]:
@@ -60,6 +61,7 @@ def _get_group_index(group: str) -> dict[str, Path]:
 
     # Early Exit for already indexed folders
     if folder in _indexes: return _indexes[folder]
+    print(f'getting index for {group}')
 
     group_folder = _get_meta_root() / folder
 
@@ -102,11 +104,11 @@ def load_data(group: str, name: str):
 #' Load String Lists From File
 #' 
 #' @param sno_entry Either a str or a dict containing a reference to a sno object.abs
-#' @param language Optional arguement defaults to "enUS"
+#' @param language Optional argument defaults to "enUS"
 def load_strings(sno_entry, language: str="enUS"):
     if CONFIG.verbose: print(f'Loading Strings for {sno_entry} ({language})')
 
-    data_root = Path(os.getenv("DATA_ROOT")) 
+    data_root = CONFIG.data_root
 
     if isinstance(sno_entry, str):
         filename = (
@@ -118,13 +120,14 @@ def load_strings(sno_entry, language: str="enUS"):
             / f'{sno_entry}.stl.json'
         )
     else:
+
         filename = (
-            data_root /
-            'json' /
-            f'{language}_Text' / 
-            'meta' / 
-            'StringList' / 
-            f'{sno_entry["groupName"]}_{sno_entry["name"]}.stl.json'
+            data_root 
+            / 'json'
+            / f'{language}_Text' 
+            / 'meta' 
+            / 'StringList' 
+            / f'{sno_entry["groupName"]}_{sno_entry["name"]}.stl.json'
         )
 
     if not Path(filename).exists():

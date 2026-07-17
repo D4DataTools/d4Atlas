@@ -64,7 +64,7 @@ class World:
     #' @details Updates `self.region_boundaries` using `self.data`
     def process_region_boundaries(self):
         if CONFIG.verbose: print(f'  - Processing Region Boundries.')
-        # null list skips the loop but silenetly fails. 
+        # null list skips the loop but silently fails. 
         # Not sure if I want it to be explicit / warn when it fails
         for camp in self.data.get("arRegionBoundaries", []):
             boundary = get_boundries_for_static_camp(camp)
@@ -111,27 +111,28 @@ class World:
     def process_world_marker_set(self, world_marker_set):
         sno_marker_set = world_marker_set.get('snoMarkerSet')
         if sno_marker_set and sno_marker_set.get('groupName') == 'MarkerSet': 
-            self._load_marker_set(sno_marker_set)
+            marker_set = load_data(sno_marker_set.get('groupName'), sno_marker_set.get('name'))
+            _process_maker_set(self, marker_set)
 
-    def _load_marker_set(self, sno_marker_set):
+    # def _load_marker_set(self, sno_marker_set):
+    # # TODO I think this logic is breaking up my map
+    #     key = (
+    #         sno_marker_set.get("groupName"),
+    #         sno_marker_set.get("name")
+    #     )
 
-        key = (
-            sno_marker_set.get("groupName"),
-            sno_marker_set.get("name")
-        )
+    #     if key in self.processed_marker_sets: return
 
-        if key in self.processed_marker_sets: return
+    #     self.processed_marker_sets.add(key)
 
-        self.processed_marker_sets.add(key)
+    #     marker_set = load_data(
+    #         sno_marker_set.get("groupName"),
+    #         sno_marker_set.get("name")
+    #     )
 
-        marker_set = load_data(
-            sno_marker_set.get("groupName"),
-            sno_marker_set.get("name")
-        )
+    #     if not marker_set: return
 
-        if not marker_set: return
-
-        _process_maker_set(self, marker_set)
+    #     _process_maker_set(self, marker_set)
 
 #' Get Global Marker Sets  from data_root
 #' @param world an object of type `World`

@@ -9,7 +9,6 @@ from d4atlas import World
 #' @param output a `Path` to a directory to write the site. if unspecified defaults to creating relative to the script in `/docs/atlas.html`
 #' @param image_url a 'str' with a link to the hosted image URL for the background
 def render_atlas_html (world: World, output: Path = None, image_url: str = CONFIG.image_url): 
-
     html_template = (
         Path(__file__).parent 
         / 'templates'
@@ -18,7 +17,7 @@ def render_atlas_html (world: World, output: Path = None, image_url: str = CONFI
 
     html = html_template.format(
         image_url = image_url, 
-        joined_markers = "".join("            " + m + "\n" for m in world.markers), 
+        joined_markers = "".join("            " + m + "\n" for m in world.markers.values()), 
         joined_region_boundries =  "".join("            " + b + "\n" for b in world.region_boundaries),
         zone_x = world.zone_art.get('x'),
         zone_y = world.zone_art.get('y'),
