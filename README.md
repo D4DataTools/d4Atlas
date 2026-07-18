@@ -8,7 +8,7 @@ This has mostly been a learning process to get more familiar with Python while l
 
 ## What's in the box
 
-d4atlas provides a python package to build maps using data from [d4Data](https://github.com/DiabloTools)/d4Data)
+d4atlas provides a python package to build maps using data from [d4Data](https://github.com/DiabloTools/d4Data)
 
 ### Classes 
 
